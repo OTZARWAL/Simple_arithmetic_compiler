@@ -39,7 +39,7 @@ Token *parser(char *input)
 {
     int pos;
     char *endpoint;
-    Token tokens_chain = malloc(300 * sizeof(Token));
+    Token *tokens_chain = malloc(300 * sizeof(Token));
     if(!tokens_chain){
         perror("malloc");
         exit(1);
@@ -50,23 +50,25 @@ Token *parser(char *input)
     while(*input)
     {
         if(isdigit(*input)){
-            long num = strtol(*input, &endpoint, 10);
+            long num = strtol(input, &endpoint, 10);
             if(endpoint == input){
                 fprintf(stderr, "No valid digits were found.\n");
                 exit(EXIT_FAILURE);
             }
             tokens_chain[pos].type = NUMBER;
-            tokene_chain[pos].value = num;
-            pos++
+            tokens_chain[pos].value = num;
+            pos++;
         }else if(check_opr(*input)){
             tokens_chain[pos].type = OPERATOR;
             tokens_chain[pos].value = (int)*input;
             pos++;
             input++;
-            }
-        }
-        else
+        }else if(isspace(*input)){
             input++;
+        }else{
+            fprintf(stderr, "Invalid character: %c\n", *input);
+            exit(EXIT_FAILURE); 
+        }
     }
 
 
